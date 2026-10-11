@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hwell.hwelladdon.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ExampleMixin",
+    "SilentShopMixin",
+    "SilentMovementMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

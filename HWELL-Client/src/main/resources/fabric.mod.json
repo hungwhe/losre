@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "hwellclient",
+  "version": "${version}",
+  "name": "HWELL Client",
+  "description": "Standalone Fabric client framework and custom ClickGUI for HWELL.",
+  "authors": ["hwell"],
+  "environment": "client",
+  "entrypoints": { "client": ["com.hwell.client.HwellClient"] },
+  "depends": { "fabricloader": ">=0.18.2", "minecraft": "~1.21.11", "java": ">=21", "fabric-api": "*" }
+}
