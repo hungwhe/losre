@@ -1,8 +1,9 @@
 package com.hwell.hwelladdon.mixin;
 
+import com.hwell.hwelladdon.modules.AutoBuyShop;
+import com.hwell.hwelladdon.modules.AutoEnchant;
 import com.hwell.hwelladdon.utils.GhostScreen;
-import com.hwell.hwelladdon.modules.AutoBuyShopBase;
-import com.hwell.hwelladdon.utils.GhostScreen;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -16,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ClientPlayerEntity.class)
 public class SilentMovementMixin {
-
     private static final Logger LOG = LoggerFactory.getLogger("SilentMovement");
     private static Screen ghostScreen = null;
     private static boolean ghostFailed = false;
@@ -24,12 +24,9 @@ public class SilentMovementMixin {
     private static Screen getGhostScreen() {
         if (ghostScreen != null) return ghostScreen;
         if (ghostFailed) return null;
-
         try {
             ghostScreen = new GhostScreen();
-            LOG.info("[SilentMovement] GhostScreen created");
         } catch (Throwable t) {
-            LOG.error("[SilentMovement] GhostScreen creation failed", t);
             ghostFailed = true;
             return null;
         }
@@ -49,18 +46,22 @@ public class SilentMovementMixin {
         if (original != null) return original;
         if (mc.player == null) return null;
 
-        AutoBuyShopBase active = AutoBuyShopBase.getActive();
-        if (active == null || !active.isActive() || !active.isSilentMode()) return null;
-
-        // Freeze mode → block movement
-        if (active.isFreezing()) return null;
-
-        // Cho phép movement khi có container handler
-        ScreenHandler handler = mc.player.currentScreenHandler;
-        if (handler != mc.player.playerScreenHandler) {
-            Screen ghost = getGhostScreen();
-            if (ghost != null) return ghost;
+        // ✅ Sử dụng Modules.get() thay vì getInstance()
+        AutoBuyShop shopModule = Modules.get().get(AutoBuyShop.class);
+        if (shopModule != null && shopModule.isActive() && shopModule.isSilentMode()) {
+            if (shopModule.isFreezing()) return null;
+            if (mc.player.currentScreenHandler != mc.player.playerScreenHandler) {
+                return getGhostScreen();
+            }
         }
+
+        AutoEnchant enchantModule = Modules.get().get(AutoEnchant.class);
+        if (enchantModule != null && enchantModule.isActive() && enchantModule.isSilentMode()) {
+            if (mc.player.currentScreenHandler != mc.player.playerScreenHandler) {
+                return getGhostScreen();
+            }
+        }
+
         return null;
     }
 }

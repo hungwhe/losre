@@ -1,11 +1,13 @@
+
 package com.hwell.hwelladdon;
 
 import com.hwell.hwelladdon.hud.ArmorHud;
 import com.hwell.hwelladdon.hud.InventoryHud;
 import com.hwell.hwelladdon.modules.*;
+import com.hwell.hwelladdon.modules.legitpvp.CrystalsOptimizer;
+import com.hwell.hwelladdon.modules.legitpvp.NoPractical;
 import com.mojang.logging.LogUtils;
 import meteordevelopment.meteorclient.MeteorClient;
-import com.hwell.hwelladdon.modules.AutoCrystal;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.hud.Hud;
@@ -15,21 +17,20 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
-
 public class HwellAddon extends MeteorAddon {
     public static final Logger LOG = LogUtils.getLogger();
 
     // ============================================================
-    // 3 CATEGORY CHÍNH
+    // CATEGORIES
     // ============================================================
-    public static final Category PVP = new Category("HWELL PVP",
-        new ItemStack(Items.END_CRYSTAL));
-
-    public static final Category MOVEMENT = new Category("HWELL MOVEMENT",
-        new ItemStack(Items.FEATHER));
-
     public static final Category AUTO_SHOP = new Category("HWELL AUTO SHOP",
         new ItemStack(Items.EMERALD));
+
+    public static final Category FARM = new Category("HWELL FARM",
+        new ItemStack(Items.DIAMOND_HOE));
+
+    public static final Category PVP_SUPER_LEGIT = new Category("HWELL PVP Super Legit",
+        new ItemStack(Items.NETHERITE_SWORD));
 
     public static final HudGroup HUD_GROUP = new HudGroup("HWELL");
 
@@ -37,17 +38,6 @@ public class HwellAddon extends MeteorAddon {
     public void onInitialize() {
         LOG.info("Initializing HwellAddon");
 
-        // ============================================================
-        // MODULES - HWELL PVP
-        // ============================================================
-        Modules.get().add(new AutoTotemSlot());
-        Modules.get().add(new AutoTotemProMax());
-        Modules.get().add(new AutoFillTotem());
-        Modules.get().add(new AutoCrystal());
-        // ============================================================
-        // MODULES - HWELL MOVEMENT
-        // ============================================================
-        // (Trống - thêm sau)
         // ============================================================
         // MODULES - HWELL AUTO SHOP
         // ============================================================
@@ -57,22 +47,38 @@ public class HwellAddon extends MeteorAddon {
         Modules.get().add(new AutoBuyShop4());
 
         // ============================================================
+        // MODULES - HWELL FARM & ORDER
+        // ============================================================
+        Modules.get().add(new HwellDropOrder());
+        Modules.get().add(new AutoEnchant());
+
+        // ============================================================
+        // MODULES - HWELL PVP SUPER LEGIT
+        // ============================================================
+        Modules.get().add(new EasyDTap());
+        Modules.get().add(new AutoHitCrystal());
+        Modules.get().add(new AnchorMarcoFast());
+        Modules.get().add(new LegitHoverTotem());
+        Modules.get().add(new NoPractical());
+        Modules.get().add(new CrystalsOptimizer());
+
+        // ============================================================
         // HUD ELEMENTS
         // ============================================================
         Hud.get().register(InventoryHud.INFO);
         Hud.get().register(ArmorHud.INFO);
         LOG.info("Registered HUD elements");
 
-        // Listener cho auto-enable
+        // Listener
         MeteorClient.EVENT_BUS.subscribe(new AutoEnableListener());
         LOG.info("AutoEnableListener registered!");
     }
 
     @Override
     public void onRegisterCategories() {
-        Modules.registerCategory(PVP);
-        Modules.registerCategory(MOVEMENT);
         Modules.registerCategory(AUTO_SHOP);
+        Modules.registerCategory(FARM);
+        Modules.registerCategory(PVP_SUPER_LEGIT);
     }
 
     @Override
@@ -82,6 +88,6 @@ public class HwellAddon extends MeteorAddon {
 
     @Override
     public GithubRepo getRepo() {
-        return new GithubRepo("MeteorDevelopment", "meteor-hwelladdon");
+        return new GithubRepo("hungwhe", "hwelladdon-1.21.11");
     }
 }
